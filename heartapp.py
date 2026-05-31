@@ -23,10 +23,11 @@ page_bg_img = """
 </style>
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
-# 🖌️ Custom text color styling
+
+# 🖌️ Custom text color styling (yellow or white)
 text_color_css = """
 <style>
-h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {
+h1, h2, h3, h4, h5, h6, p, label, div {
     color: yellow !important;  /* change to white if you prefer */
 }
 </style>
@@ -52,34 +53,36 @@ with col2:
     sc = st.number_input("Serum Creatinine", min_value=0.0, max_value=20.0, value=1.0)
     ss = st.number_input("Serum Sodium", min_value=0, max_value=200, value=135)
 time = st.number_input("Follow-up Time (days)", min_value=0, max_value=1000, value=100)
+smoke = st.selectbox("Smoking Status", ["No", "Yes"])
 
 # 🔢 Encode categorical inputs
 anaemia_val = 1 if anaemia == "Yes" else 0
 diabetes_val = 1 if diabetes == "Yes" else 0
 high_bp_val = 1 if high_bp == "Yes" else 0
 sex_val = 1 if sex == "Male" else 0
-
+smoke_val = 1 if smoke == "Yes" else 0
 # 🚀 Prediction
 if st.button("Predict"):
     input_data = np.array([[age, anaemia_val, cpk, diabetes_val, ef,
-                            high_bp_val, platelets, sc, ss, sex_val, time]])
+                            high_bp_val, platelets, sc, ss, sex_val, time, smoke_val]])
     scaled = heart_scaler.transform(input_data)
     prediction = heart_model.predict(scaled)
 
     if prediction[0] == 1:
         st.markdown(
-            f"<div style='background-color:#ffe6e6;padding:15px;border-radius:10px;'>"
-            f"<h3 style='color:#b30000;'>⚠️ High Risk of Heart Failure</h3>"
+            f"<div style='background-color:#660000;padding:15px;border-radius:10px;'>"
+            f"<h3>⚠️ High Risk of Heart Failure</h3>"
             f"</div>",
             unsafe_allow_html=True
         )
     else:
         st.markdown(
-            f"<div style='background-color:#e6ffe6;padding:15px;border-radius:10px;'>"
-            f"<h3 style='color:#006600;'>✅ Low Risk of Heart Failure</h3>"
+            f"<div style='background-color:#004d00;padding:15px;border-radius:10px;'>"
+            f"<h3>✅ Low Risk of Heart Failure</h3>"
             f"</div>",
             unsafe_allow_html=True
         )
+
 # ✍️ Footer credit
 st.markdown(
     """
